@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Management System - Login</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #8B4513, #D2B48C);
             display: flex;
             justify-content: center;
@@ -16,11 +18,11 @@
             color: #333;
         }
         .login-container {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 350px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 360px;
             text-align: center;
             border: 2px solid #654321;
         }
@@ -28,16 +30,29 @@
             margin-bottom: 20px;
             color: #654321;
             font-size: 24px;
+            font-weight: 600;
         }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group input {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
+            padding-right: 40px; /* space for icon */
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             box-sizing: border-box;
+        }
+        .input-group i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #654321;
+            font-size: 18px;
         }
         .login-container button {
             width: 100%;
@@ -45,10 +60,11 @@
             background-color: #654321;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
+            transition: background 0.3s;
         }
         .login-container button:hover {
             background-color: #8B4513;
@@ -67,10 +83,35 @@
         <h2>Library Management System Login</h2>
         <form action="{% url 'login' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <!-- Start with eye-slash (hidden) -->
+                <i class="fa-solid fa-eye-slash" id="togglePassword"></i>
+            </div>
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <script>
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+
+        togglePassword.addEventListener("click", function () {
+            const isHidden = passwordInput.getAttribute("type") === "password";
+            passwordInput.setAttribute("type", isHidden ? "text" : "password");
+
+            // Toggle icons correctly
+            if (isHidden) {
+                this.classList.remove("fa-eye-slash");
+                this.classList.add("fa-eye");
+            } else {
+                this.classList.remove("fa-eye");
+                this.classList.add("fa-eye-slash");
+            }
+        });
+    </script>
 </body>
 </html>
