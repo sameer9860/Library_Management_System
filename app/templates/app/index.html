@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Library Search</title>
+<style>
+body {font-family: Arial; background:#f7f7f7;}
+.container {width:60%; margin:auto; margin-top:50px;}
+input {width:80%; padding:10px;}
+button {padding:10px 15px;}
+.card{
+ background:white;
+ padding:15px;
+ margin-top:10px;
+ border-radius:7px;
+ box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+h2{
+    color: red;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h2>Library Book Search (Best First Search)</h2>
+
+    <form method="get">
+        <input type="text" name="q" placeholder="Search book..." value="{{query}}">
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if results %}
+        <h3>Results</h3>
+        {% for book in results %}
+        <div class="card">
+            <h3>{{book.title}}</h3>
+            <p><b>Author:</b> {{book.author}}</p>
+            <p><b>Category:</b> {{book.category}}</p>
+            <p>{{book.description}}</p>
+        </div>
+        {% endfor %}
+    {% elif query %}
+        <p>No books found.</p>
+    {% endif %}
+</div>
+</body>
+<script>
+let input = document.querySelector("input");
+
+input.addEventListener("keyup", function(e){
+    if(e.key === "Enter"){
+        this.form.submit();
+    }
+});
+</script>
+
+</html>
