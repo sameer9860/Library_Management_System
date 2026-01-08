@@ -1,60 +1,162 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Library Search</title>
-<style>
-body {font-family: Arial; background:#f7f7f7;}
-.container {width:60%; margin:auto; margin-top:50px;}
-input {width:80%; padding:10px;}
-button {padding:10px 15px;}
-.card{
- background:white;
- padding:15px;
- margin-top:10px;
- border-radius:7px;
- box-shadow:0 2px 4px rgba(0,0,0,0.2);
-}
-h2{
-    color: red;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Search</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 25px;
+        }
+        form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            padding: 14px 22px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        .section h3 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .card {
+            background: #f8f9fa;
+            padding: 18px;
+            margin: 12px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+        .card h4 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            color: #555;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+            form {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-
 <body>
-<div class="container">
-    <h2>Library Book Search (Best First Search)</h2>
+    <div class="container">
+        <h2>Library Book Search</h2>
+        <form method="get" id="searchForm">
+            <label for="searchInput" class="sr-only">Search for a book</label>
+            <input type="text" id="searchInput" name="q" placeholder="Search by title, author, or category..." value="{{ query }}">
+            <button type="submit">Search</button>
+        </form>
+        <div class="loading" id="loading">Searching...</div>
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Search book..." value="{{query}}">
-        <button type="submit">Search</button>
-    </form>
+        {% if query %}
+            {% if best_results %}
+            <div class="section">
+                <h3>Best-First Search Results</h3>
+                {% for book in best_results %}
+                <div class="card">
+                    <h4>{{ book.title }}</h4>
+                    <p><strong>Author:</strong> {{ book.author }}</p>
+                    <p><strong>Category:</strong> {{ book.category }}</p>
+                    <p>{{ book.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-    <hr>
+            {% if dfs_results %}
+            <div class="section">
+                <h3>DFS Traversal</h3>
+                {% for book in dfs_results %}
+                <div class="card">
+                    <h4>{{ book.title }}</h4>
+                    <p><strong>Author:</strong> {{ book.author }}</p>
+                    <p><strong>Category:</strong> {{ book.category }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-    {% if results %}
-        <h3>Results</h3>
-        {% for book in results %}
-        <div class="card">
-            <h3>{{book.title}}</h3>
-            <p><b>Author:</b> {{book.author}}</p>
-            <p><b>Category:</b> {{book.category}}</p>
-            <p>{{book.description}}</p>
-        </div>
-        {% endfor %}
-    {% elif query %}
-        <p>No books found.</p>
-    {% endif %}
-</div>
+            {% if bfs_results %}
+            <div class="section">
+                <h3>BFS Traversal</h3>
+                {% for book in bfs_results %}
+                <div class="card">
+                    <h4>{{ book.title }}</h4>
+                    <p><strong>Author:</strong> {{ book.author }}</p>
+                    <p><strong>Category:</strong> {{ book.category }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if not best_results and not dfs_results and not bfs_results %}
+                <p>No books found for "{{ query }}". Try different keywords.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <script>
+        const form = document.getElementById('searchForm');
+        const loading = document.getElementById('loading');
+
+        form.addEventListener('submit', function() {
+            loading.style.display = 'block';
+        });
+    </script>
 </body>
-<script>
-let input = document.querySelector("input");
-
-input.addEventListener("keyup", function(e){
-    if(e.key === "Enter"){
-        this.form.submit();
-    }
-});
-</script>
-
 </html>
